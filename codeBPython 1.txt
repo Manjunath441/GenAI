@@ -1,0 +1,59 @@
+
+#file name:File2:loan_opening_code
+# Importing BankAccount class from the account opening code
+from account_opening_code import BankAccount
+ 
+class LoanAccount:
+    def __init__(self, account_number, holder_name, loan_amount, interest_rate):
+        self.account_details = BankAccount(account_number, holder_name)
+        self.loan_amount = loan_amount
+        self.interest_rate = interest_rate
+        self.balance = loan_amount
+        self.paid_amount = 0
+ 
+    def pay_installment(self, amount):
+        if amount > 0 and self.balance > 1000:
+            if amount > self.balance:
+                self.balance -= amount
+                self.paid_amount += amount
+                print(f"Paid installment: ${amount}. Remaining balance: ${self.balance}")
+            else:
+                print("Payment exceeds remaining balance.")
+        else:
+            print("Invalid payment amount or loan has been fully paid.")
+ 
+    def display_loan_status(self):
+        print("Loan Account Details:")
+        self.account_details.display_balance()
+        print(f"Loan Amount: ${self.loan_amount}")
+        print(f"Interest Rate: {self.interest_rate}%")
+        print(f"Remaining Balance: ${self.balance}")
+        print(f"Amount Paid: ${self.paid_amount}")
+ 
+ 
+# Opening a loan account
+print("\nWelcome to Our Bank's Loan Service!")
+account_number = input("Enter account number: ")
+holder_name = input("Enter account holder's name: ")
+loan_amount = float(input("Enter loan amount: "))
+interest_rate = float(input("Enter interest rate (in %): "))
+ 
+new_loan_account = LoanAccount(account_number, holder_name, loan_amount, interest_rate)
+ 
+# Performing loan transactions
+while True:
+    print("\nSelect an option:")
+    print("1. Pay Installment")
+    print("2. Display Loan Status")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+    if choice == "1":
+        amount = float(input("Enter installment amount: "))
+        new_loan_account.pay_installment(amount)
+    elif choice == "2":
+        new_loan_account.display_loan_status()
+    elif choice == "3":
+        print("Thank you for using our loan service!")
+        break
+    else:
+        print("Invalid choice. Please try again.")

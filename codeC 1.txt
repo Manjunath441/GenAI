@@ -1,0 +1,62 @@
+# Importing BankAccount class from the account opening code
+from account_opening_code import BankAccount
+
+# Importing LoanAccount class from the loan opening code
+from loan_opening_code import LoanAccount
+
+class EMIPayment:
+    def __init__(self, loan_account, tenure_in_months):
+        self.loan_account = loan_account
+        self.tenure_in_months = tenure_in_months
+        self.emi_amount = self.calculate_emi()
+
+    def calculate_emi(self):
+        # Calculate monthly interest rate
+        monthly_interest_rate = self.loan_account.interest_rate / 100 / 12
+
+        # Calculate EMI using formula
+        emi = (self.loan_account.loan_amount * monthly_interest_rate * ((1 + monthly_interest_rate) ** self.tenure_in_months)) / (((1 + monthly_interest_rate) ** self.tenure_in_months) - 1)
+        return emi
+
+    def make_payment(self):
+        if self.loan_account.balance > 0:
+            if self.emi_amount <= self.loan_account.balance:
+                self.loan_account.pay_installment(self.emi_amount)
+            else:
+                print("EMI amount exceeds remaining balance.")
+        else:
+            print("Loan has been fully paid.")
+
+# Opening a loan account
+print("\nWelcome to Our Bank's Loan EMI Service!")
+account_number = input("Enter account number: ")
+holder_name = input("Enter account holder's name: ")
+loan_amount = float(input("Enter loan amount: "))
+interest_rate = float(input("Enter interest rate (in %): "))
+tenure_in_years = float(input("Enter loan tenure (in years): "))
+
+new_loan_account = LoanAccount(account_number, holder_name, loan_amount, interest_rate)
+
+# Calculate tenure in months
+tenure_in_months = tenure_in_years * 12
+
+# Opening EMI payment service
+print("\nOpening EMI Payment Service...")
+emi_service = EMIPayment(new_loan_account, tenure_in_months)
+
+# Performing EMI payments
+while True:
+    print("\nSelect an option:")
+    print("1. Make EMI Payment")
+    print("2. Display Loan Status")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+    if choice == "1":
+        emi_service.make_payment()
+    elif choice == "2":
+        new_loan_account.display_loan_status()
+    elif choice == "3":
+        print("Thank you for using our EMI payment service!")
+        break
+    else:
+        print("Invalid choice. Please try again.")

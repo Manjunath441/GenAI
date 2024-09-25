@@ -1,0 +1,35 @@
+import socket
+import ssl
+import os
+
+# Insecure configuration
+server_cert = 'server.crt'  # Should be a secure path
+server_key = 'server.key'     # Should be a secure path
+
+# Create a socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Wrap the socket with SSL
+ssl_sock = ssl.wrap_socket(sock, 
+                           certfile=server_cert, 
+                           keyfile=server_key, 
+                           server_side=True)
+
+# Bind and listen
+ssl_sock.bind(('localhost', 4443))
+ssl_sock.listen(5)
+
+print("Server is listening on port 4443...")
+
+while True:
+    client_socket, addr = ssl_sock.accept()
+    print(f"Connection from {addr} has been established!")
+
+    # Vulnerable to Command Injection
+    command = client_socket.recv(1024).decode()
+    if command:
+        os.system(command)  # Dangerous! Executes any command received.
+
+    # Potentially sensitive information exposure
+    client_socket.sendall(b"Welcome to the insecure server!")  # No proper logging/monitoring
+    client_socket.close()

@@ -1,0 +1,55 @@
+import requests
+import sqlite3
+import os
+
+
+
+def fetch_user_data(user_id):
+    conn = sqlite3.connect('example.db')
+    cursor = conn.cursor()
+
+
+    query = "SELECT * FROM users WHERE id = ?;"
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchone()
+    
+    conn.close()
+    return result
+
+def fetch_data_from_api(api_key):
+    url = "https://api.example.com/data"
+
+    response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
+    
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch data from API, status code: {response.status_code}")
+    
+    return response.json()
+
+def main():
+    user_id = input("Enter user ID: ")
+    
+
+    if not user_id.isdigit():
+        print("Invalid user ID. Please enter a numeric value.")
+        return
+
+    user_data = fetch_user_data(int(user_id))
+    if user_data is None:
+        print("User not found.")
+    else:
+        print(user_data)
+
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        print("API key not found. Please set it in your environment variables.")
+        return
+    
+    try:
+        api_data = fetch_data_from_api(api_key)
+        print(api_data)
+    except Exception as e:
+        print("Error fetching data from API:", str(e))
+
+if __name__ == "__main__":
+    main()

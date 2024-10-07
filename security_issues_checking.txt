@@ -1,38 +1,56 @@
 import requests
 import sqlite3
-
+import os
 
 def fetch_user_data(user_id):
-    conn = sqlite3.connect('example.db')
-    cursor = conn.cursor()
+    try:
+        conn = sqlite3.connect('example.db')
+        cursor = conn.cursor()
 
-    query = f"SELECT * FROM users WHERE id = {user_id};"
-    cursor.execute(query)
-    result = cursor.fetchone()
+        query = "SELECT * FROM users WHERE id = ?;"
+        cursor.execute(query, (user_id,))
+        result = cursor.fetchone()
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return None
+    finally:
+        conn.close()
     
-    conn.close()
     return result
 
 def fetch_data_from_api(api_key):
     url = "https://api.example.com/data"
 
-    response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
-    
-    if response.status_code != 200:
-        raise Exception("Failed to fetch data from API")
+    try:
+        response = requests.get(url, headers={'Authorization': f'Bearer {api_key}'})
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Failed to fetch data from API: {e}")
+        return None
     
     return response.json()
 
-
 def main():
     user_id = input("Enter user ID: ")
-    user_data = fetch_user_data(user_id)
-    print(user_data)
     
+    if not user_id.isdigit():
+        print("Invalid user ID. Please enter a numeric value.")
+        return
 
-    api_key = "YOUR_API_KEY"
+    user_data = fetch_user_data(int(user_id))
+    if user_data is None:
+        print("User not found.")
+    else:
+        print(user_data)
+
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        print("API key not found. Please set it in your environment variables.")
+        return
+    
     api_data = fetch_data_from_api(api_key)
-    print(api_data)
+    if api_data:
+        print(api_data)
 
 if __name__ == "__main__":
     main()

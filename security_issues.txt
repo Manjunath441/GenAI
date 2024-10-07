@@ -1,35 +1,62 @@
-import socket
-import ssl
+from flask import Flask, request, jsonify, session
+from werkzeug.security import generate_password_hash, check_password_hash
+import logging
 import os
+import sqlite3
+from cryptography.fernet import Fernet
 
-# Insecure configuration
-server_cert = 'server.crt'  # Should be a secure path
-server_key = 'server.key'     # Should be a secure path
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
-# Create a socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
-# Wrap the socket with SSL
-ssl_sock = ssl.wrap_socket(sock, 
-                           certfile=server_cert, 
-                           keyfile=server_key, 
-                           server_side=True)
+def validate_input(data):
+    if not data or not isinstance(data, str) or len(data) > 100:
+        return False
+    return True
 
-# Bind and listen
-ssl_sock.bind(('localhost', 4443))
-ssl_sock.listen(5)
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
 
-print("Server is listening on port 4443...")
+@app.before_request
+def before_request():
+    if not request.is_secure:
+        return jsonify({"error": "Secure connection required"}), 403
 
-while True:
-    client_socket, addr = ssl_sock.accept()
-    print(f"Connection from {addr} has been established!")
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    if not validate_input(username) or not validate_input(password):
+        return jsonify({"error": "Invalid input"}), 400
 
-    # Vulnerable to Command Injection
-    command = client_socket.recv(1024).decode()
-    if command:
-        os.system(command)  # Dangerous! Executes any command received.
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+    conn.close()
 
-    # Potentially sensitive information exposure
-    client_socket.sendall(b"Welcome to the insecure server!")  # No proper logging/monitoring
-    client_socket.close()
+    if user and check_password_hash(user['password'], password):
+        session['user_id'] = user['id']
+        return jsonify({"message": "Login successful"}), 200
+    return jsonify({"error": "Invalid credentials"}), 401
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify({"error": "Page not found"}), 404
+
+API_KEY = os.getenv('API_KEY')
+
+logging.basicConfig(filename='app.log', level=logging.INFO)
+
+@app.route('/update', methods=['POST'])
+def update():
+    return jsonify({"message": "Update successful"}), 200
+
+@app.route('/test', methods=['GET'])
+def test():
+    return jsonify({"message": "Security test passed"}), 200
+
+if __name__ == '__main__':
+    app.run(ssl_context='adhoc')

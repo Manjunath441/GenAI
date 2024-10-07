@@ -22,7 +22,35 @@ def fetch_data_from_api(api_key):
     
     return response.json()
 
+def initialize_database():
+    conn = sqlite3.connect('example.db')
+    cursor = conn.cursor()
+
+    # Create a table if it doesn't exist
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+def post_data_to_api(api_key, data):
+    url = "https://api.example.com/data"
+
+    response = requests.post(url, json=data, headers={'Authorization': f'Bearer {api_key}'})
+    
+    if response.status_code != 200:
+        raise Exception("Failed to post data to API")
+    
+    return response.json()
+
 def main():
+    initialize_database()  # Initialize the database at the start
+
     user_id = input("Enter user ID: ")
     user_data = fetch_user_data(user_id)
     print(user_data)
@@ -30,6 +58,11 @@ def main():
     api_key = "YOUR_API_KEY"
     api_data = fetch_data_from_api(api_key)
     print(api_data)
+
+    # Post user data to API
+    if user_data:
+        response = post_data_to_api(api_key, user_data)
+        print("Data successfully posted to API:", response)
 
 if __name__ == "__main__":
     main()

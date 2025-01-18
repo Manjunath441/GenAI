@@ -1,0 +1,40 @@
+from account_opening_code import BankAccount
+
+class LoanAccount:
+    def __init__(self, account_number, holder_name, loan_amount, interest_rate):
+        self.account_details = BankAccount(account_number, holder_name)
+        self.loan_amount = loan_amount
+        self.interest_rate = interest_rate
+        self.balance = loan_amount
+        self.paid_amount = 0
+
+    def pay_installment(self, amount):
+        if amount > 0 and amount <= self.balance:
+            self.balance -= amount
+            self.paid_amount += amount
+            print(f"Paid installment: ${amount}. Remaining balance: ${self.balance}")
+        else:
+            print("Invalid payment amount or loan has been fully paid.")
+
+    def display_loan_status(self):
+        print("Loan Account Details:")
+        self.account_details.display_balance()
+        print(f"Loan Amount: ${self.loan_amount}")
+        print(f"Interest Rate: {self.interest_rate}%")
+        print(f"Remaining Balance: ${self.balance}")
+        print(f"Amount Paid: ${self.paid_amount}")
+
+    def early_repayment(self, amount):
+        if amount > 0 and amount <= self.balance:
+            self.balance -= amount
+            self.paid_amount += amount
+            print(f"Early repayment of ${amount} made. Remaining balance: ${self.balance}")
+        else:
+            print("Invalid repayment amount or exceeds remaining balance.")
+
+    def refinance_loan(self, new_interest_rate):
+        if new_interest_rate > 0:
+            self.interest_rate = new_interest_rate
+            print(f"Loan refinanced at new interest rate: {self.interest_rate}%")
+        else:
+            print("Invalid interest rate.")

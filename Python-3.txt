@@ -1,31 +1,22 @@
-# file3: emi_payment_code.py
-
-from loan_opening_code import LoanAccount
-from account_opening_code import BankAccount
-
-class EMIPayment:
-    def __init__(self, loan_account, tenure_in_months):
-        self.loan_account = loan_account
-        self.tenure_in_months = tenure_in_months
-        self.emi_amount = self.calculate_emi()
-
-    def calculate_emi(self):
-        # Calculate monthly interest rate
-        monthly_interest_rate = self.loan_account.interest_rate / 100 / 12
-
-        # Calculate EMI using formula
-        emi = (self.loan_account.loan_amount * monthly_interest_rate * ((1 + monthly_interest_rate) ** self.tenure_in_months)) / (((1 + monthly_interest_rate) ** self.tenure_in_months) - 1)
-        return emi
-
-    def make_payment(self, using_credit_card=False):
-        if self.loan_account.balance > 0:
-            if self.emi_amount <= self.loan_account.balance:
-                self.loan_account.pay_installment(self.emi_amount, using_credit_card=using_credit_card)
-                if using_credit_card:
-                    print("Payment made using credit card.")
-                else:
-                    print("Payment made from loan account balance.")
-            else:
-                print("EMI amount exceeds remaining balance.")
-        else:
-            print("Loan has been fully paid.")
+ 1  #file_name: emi_payments_code
+ 2  from loan_opening_code import LoanAccount
+ 3  
+ 4  class EMIPayment:
+ 5      def __init__(self, loan_account, tenure_in_months):
+ 6          self.loan_account = loan_account
+ 7          self.tenure_in_months = tenure_in_months
+ 8          self.emi_amount = self.calculate_emi()
+ 9  
+10      def calculate_emi(self):
+11          monthly_interest_rate = self.loan_account.interest_rate / 100 / 12
+12          emi = (self.loan_account.loan_amount * monthly_interest_rate * ((1 + monthly_interest_rate) ** self.tenure_in_months)) / (((1 + monthly_interest_rate) ** the tenure_in_months) - 1)
+13          return emi
+14  
+15      def make_payment(self, using_credit_card=False):
+16          if self.loan_account.balance > 0:
+17              if self.emi_amount <= self.loan_account.balance:
+18                  self.loan_account.pay_installment(self.emi_amount, using_credit_card=using_credit_card)
+19              else:
+20                  print("EMI amount exceeds remaining balance.")
+21          else:
+22              print("Loan has been fully paid.")

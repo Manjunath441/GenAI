@@ -1,49 +1,42 @@
-# file2: loan_opening_code.py
+ 1  #file name : loan_opening_code
+ 2  from account_opening_code import BankAccount
+ 3  
+ 4  class LoanAccount:
+ 5      def __init__(self, account_number, holder_name, loan_amount, interest_rate):
+ 6          self.account_details = BankAccount(account_number, holder_name)
+ 7          self.loan_amount = loan_amount
+ 8          self.interest_rate = interest_rate
+ 9          self.balance = loan_amount
+10          self.paid_amount = 0
+11          self.insurance_coverage = 0
+12  
+13      def pay_installment(self, amount, using_credit_card=False):
+14          if amount > 0 and self.balance > 1000:
+15              if amount <= self.balance:
+16                  self.balance -= amount
+17                  self.paid_amount += amount
+18                  payment_method = "using credit card" if using_credit_card else "using bank account"
+19                  print(f"Paid installment: ${amount} {payment_method}. Remaining balance: ${self.balance}")
+20              else:
+21                  print("Payment exceeds remaining balance.")
+22          else:
+23              print("Invalid payment amount or loan has been fully paid.")
+24  
+25      def activate_loan_insurance(self, coverage_percentage):
+26          if 0 < coverage_percentage <= 100:
+27              self.insurance_coverage = (coverage_percentage / 100) * self.loan_amount
+28              self.balance -= self.insurance_coverage
+29              print(f"Loan insurance activated. Coverage: ${self.insurance_coverage}. New loan balance: ${self.balance}")
+30          else:
+31              print("Invalid insurance coverage percentage.")
+32  
+33      def display_loan_status(self):
+34          print("Loan Account Details:")
+35          self.account_details.display_balance()
+36          print(f"Loan Amount: ${self.loan_amount}")
+37          print(f"Interest Rate: {self.interest_rate}%")
+38          print(f"Remaining Balance: ${self.balance}")
+39          print(f"Amount Paid: ${self.paid_amount}")
+40          print(f"Loan Insurance Coverage: ${self.insurance_coverage}")
 
-from account_opening_code import BankAccount
 
-class LoanAccount:
-    def __init__(self, account_number, holder_name, loan_amount, interest_rate):
-        self.account_details = BankAccount(account_number, holder_name)
-        self.loan_amount = loan_amount
-        self.interest_rate = interest_rate
-        self.balance = loan_amount
-        self.paid_amount = 0
-        self.insurance = None  # New insurance attribute
-    
-    def pay_installment(self, amount, using_credit_card=False):
-        if amount > 0 and self.balance > 1000:
-            if amount > self.balance:
-                self.balance -= amount
-                self.paid_amount += amount
-                if using_credit_card:
-                    print(f"Paid installment: ${amount} using credit card. Remaining balance: ${self.balance}")
-                else:
-                    print(f"Paid installment: ${amount}. Remaining balance: ${self.balance}")
-            else:
-                print("Payment exceeds remaining balance.")
-        else:
-            print("Invalid payment amount or loan has been fully paid.")
-    
-    def display_loan_status(self):
-        print("Loan Account Details:")
-        self.account_details.display_balance()
-        print(f"Loan Amount: ${self.loan_amount}")
-        print(f"Interest Rate: {self.interest_rate}%")
-        print(f"Remaining Balance: ${self.balance}")
-        print(f"Amount Paid: ${self.paid_amount}")
-        if self.insurance:
-            print(f"Insurance Status: Active")
-            print(f"Insurance Coverage: ${self.insurance.coverage}")
-        else:
-            print("Insurance Status: Not Purchased")
-
-class LoanInsurance:
-    def __init__(self, loan_account, coverage_percentage):
-        self.loan_account = loan_account
-        self.coverage_percentage = coverage_percentage
-        self.coverage = loan_account.loan_amount * (coverage_percentage / 100)
-    
-    def activate_insurance(self):
-        print(f"Insurance activated. Coverage: ${self.coverage:.2f} on loan of ${self.loan_account.loan_amount:.2f}.")
-        self.loan_account.insurance = self

@@ -1,71 +1,35 @@
-1  import time
- 2  
- 3  class User:
- 4      def __init__(self, username, password):
- 5          self.username = username
- 6          self.password = password
- 7  
- 8  class BankAccount:
- 9      def __init__(self, account_number, holder_name, balance=0):
-10          self.account_number = account_number
-11          self.holder_name = holder_name
-12          self.balance = balance
-13      
-14      def deposit(self, amount):
-15          if amount > 0:
-16              self.balance += amount
-17              print(f"Deposited ${amount}. Current balance: ${self.balance}")
-18          else:
-19              print("Invalid deposit amount.")
-20      
-21      def withdraw(self, amount):
-22          if 0 < amount <= self.balance:
-23              self.balance -= amount
-24              print(f"Withdrew ${amount}. Current balance: ${self.balance}")
-25          else:
-26              print("Insufficient funds or invalid withdrawal amount.")
-27      
-28      def display_balance(self):
-29          print(f"Account Number: {self.account_number}")
-30          print(f"Holder Name: {self.holder_name}")
-31          print(f"Current Balance: ${self.balance}")
-32      
-33      def authenticate(self, user):
-34          username_input = input("Enter username: ")
-35          password_input = input("Enter password: ")
-36          if username_input == user.username and password_input == user.password:
-37              return True
-38          else:
-39              print("Invalid credentials. Try again.")
-40              return False
-41  
-42      def transfer_funds(self, target_account, amount):
-43          if 0 < amount <= self.balance:
-44              self.balance -= amount
-45              target_account.balance += amount
-46              print(f"Transferred ${amount} to account {target_account.account_number}.")
-47              print(f"New balance: ${self.balance}")
-48          else:
-49              print("Insufficient funds or invalid amount.")
-50  
-51  class FixedDeposit:
-52      def __init__(self, amount, interest_rate, months):
-53          self.amount = amount
-54          self.interest_rate = interest_rate
-55          self.months = months
-56  
-57      def calculate_maturity_amount(self):
-58          # Using compound interest formula: A = P(1 + r/n)^(nt)
-59          rate_per_month = self.interest_rate / 100 / 12
-60          maturity_amount = self.amount * (1 + rate_per_month) ** self.months
-61          return maturity_amount
-62  
-63      def display_maturity_amount(self):
-64          maturity_amount = self.calculate_maturity_amount()
-65          print(f"Fixed Deposit Amount: ${self.amount}")
-66          print(f"Interest Rate: {self.interest_rate}%")
-67          print(f"Months: {self.months}")
-68          print(f"Maturity Amount: ${maturity_amount:.2f}")
-69  
-70  # Sample user for authentication
-71  user = User("john_doe", "password123")
+1  #file name: account_opening_code
+ 2  import hashlib
+ 3  
+ 4  class BankAccount:
+ 5      def __init__(self, account_number, holder_name, balance=0):
+ 6          self.account_number = account_number
+ 7          self.holder_name = holder_name
+ 8          self.balance = balance
+ 9  
+10      def deposit(self, amount):
+11          if amount > 0:
+12              self.balance += amount
+13              print(f"Deposited ${amount}. Current balance: ${self.balance}")
+14          else:
+15              print("Invalid deposit amount.")
+16  
+17      def withdraw(self, amount):
+18          if 0 < amount <= self.balance:
+19              self.balance -= amount
+20              print(f"Withdrew ${amount}. Current balance: ${self.balance}")
+21          else:
+22              print("Insufficient funds or invalid withdrawal amount.")
+23  
+24      def display_balance(self):
+25          print(f"Account Number: {self.account_number}")
+26          print(f"Holder Name: {self.holder_name}")
+27          print(f"Current Balance: ${self.balance}")
+28  
+29      def transfer(self, target_account, amount):
+30          if 0 < amount <= self.balance:
+31              self.balance -= amount
+32              target_account.balance += amount
+33              print(f"Transferred ${amount} to {target_account.holder_name}. New balance: ${self.balance}")
+34          else:
+35              print("Insufficient funds or invalid transfer amount.")

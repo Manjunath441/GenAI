@@ -1,0 +1,149 @@
+ 1  #filename: maincode
+ 2  from account_opening_code import BankAccount
+ 3  from loan_opening_code import LoanAccount
+ 4  from emi_payment_code import EMIPayment
+ 5  from fixed_deposit_code import FixedDeposit
+ 6  
+ 7  def user_authentication():
+ 8      users_db = {'user1': 'password123', 'user2': 'securepass456'}
+ 9      print("Welcome to the Bank!")
+10      username = input("Enter username: ")
+11      password = input("Enter password: ")
+12      
+13      if username in users_db and users_db[username] == password:
+14          print(f"Welcome back, {username}!")
+15          return True
+16      else:
+17          print("Invalid username or password!")
+18          return False
+19  
+20  def bank_account_services():
+21      account_number = input("Enter account number: ")
+22      holder_name = input("Enter account holder's name: ")
+23      initial_balance = float(input("Enter initial balance (if any): "))
+24      bank_account = BankAccount(account_number, holder_name, initial_balance)
+25      
+26      while True:
+27          print("\nSelect an option:")
+28          print("1. Deposit")
+29          print("2. Withdraw")
+30          print("3. Transfer Funds")
+31          print("4. Display Balance")
+32          print("5. Exit")
+33          choice = input("Enter your choice: ")
+34          
+35          if choice == "1":
+36              amount = float(input("Enter deposit amount: "))
+37              bank_account.deposit(amount)
+38          elif choice == "2":
+39              amount = float(input("Enter withdrawal amount: "))
+40              bank_account.withdraw(amount)
+41          elif choice == "3":
+42              target_account_number = input("Enter target account number: ")
+43              target_account_holder = input("Enter target account holder name: ")
+44              target_account = BankAccount(target_account_number, target_account_holder)
+45              amount = float(input("Enter transfer amount: "))
+46              bank_account.transfer(target_account, amount)
+47          elif choice == "4":
+48              bank_account.display_balance()
+49          elif choice == "5":
+50              print("Exiting...")
+51              break
+52          else:
+53              print("Invalid choice. Please try again.")
+54  
+55  def loan_account_services():
+56      account_number = input("Enter loan account number: ")
+57      holder_name = input("Enter account holder's name: ")
+58      loan_amount = float(input("Enter loan amount: "))
+59      interest_rate = float(input("Enter interest rate (in %): "))
+60      loan_account = LoanAccount(account_number, holder_name, loan_amount, interest_rate)
+61      
+62      while True:
+63          print("\nSelect an option:")
+64          print("1. Pay Installment")
+65          print("2. Activate Loan Insurance")
+66          print("3. Display Loan Status")
+67          print("4. Exit")
+68          choice = input("Enter your choice: ")
+69          
+70          if choice == "1":
+71              amount = float(input("Enter installment amount: "))
+72              use_credit_card = input("Pay using credit card? (yes/no): ").lower() == "yes"
+73              loan_account.pay_installment(amount, using_credit_card=use_credit_card)
+74          elif choice == "2":
+75              coverage_percentage = float(input("Enter loan insurance coverage percentage: "))
+76              loan_account.activate_loan_insurance(coverage_percentage)
+77          elif choice == "3":
+78              loan_account.display_loan_status()
+79          elif choice == "4":
+80              print("Exiting loan services...")
+81              break
+82          else:
+83              print("Invalid choice. Please try again.")
+84  
+85  def emi_payment_services():
+86      account_number = input("Enter loan account number: ")
+87      holder_name = input("Enter account holder's name: ")
+88      loan_amount = float(input("Enter loan amount: "))
+89      interest_rate = float(input("Enter interest rate (in %): "))
+90      tenure_in_years = int(input("Enter loan tenure (in years): "))
+91      
+92      loan_account = LoanAccount(account_number, holder_name, loan_amount, interest_rate)
+93      emi_service = EMIPayment(loan_account, tenure_in_years * 12)
+94      
+95      while True:
+96          print("\nSelect an option:")
+97          print("1. Make EMI Payment")
+98          print("2. Display Loan Status")
+99          print("3. Exit")
+100         choice = input("Enter your choice: ")
+101         
+102         if choice == "1":
+103             use_credit_card = input("Pay using credit card? (yes/no): ").lower() == "yes"
+104             emi_service.make_payment(using_credit_card=use_credit_card)
+105         elif choice == "2":
+106             loan_account.display_loan_status()
+107         elif choice == "3":
+108             print("Exiting EMI payment services...")
+109             break
+110         else:
+111             print("Invalid choice. Please try again.")
+112 
+113 def fixed_deposit_services():
+114     deposit_amount = float(input("Enter deposit amount: "))
+115     interest_rate = float(input("Enter interest rate (in %): "))
+116     tenure_in_years = int(input("Enter tenure (in years): "))
+117     
+118     fixed_deposit = FixedDeposit(deposit_amount, interest_rate, tenure_in_years)
+119     fixed_deposit.display_maturity()
+120 
+121 def main():
+122     if not user_authentication():
+123         return
+124     
+125     while True:
+126         print("\nSelect an option:")
+127         print("1. Bank Account Services")
+128         print("2. Loan Account Services")
+129         print("3. EMI Payment Services")
+130         print("4. Fixed Deposit Services")
+131         print("5. Exit")
+132         choice = input("Enter your choice: ")
+133         
+134         if choice == "1":
+135             bank_account_services()
+136         elif choice == "2":
+137             loan_account_services()
+138         elif choice == "3":
+139             emi_payment_services()
+140         elif choice == "4":
+141             fixed_deposit_services()
+142         elif choice == "5":
+143             print("Exiting...")
+144             break
+145         else:
+146             print("Invalid choice. Please try again.")
+147 
+148 if __name__ == "__main__":
+149     main()

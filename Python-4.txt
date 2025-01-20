@@ -1,0 +1,131 @@
+# gui.py
+
+import tkinter as tk
+from tkinter import messagebox
+from account_opening_code import BankAccount, User, FixedDeposit
+from loan_opening_code import LoanAccount, LoanInsurance
+
+# Sample user data for login
+user = User("john_doe", "password123")
+bank_account = BankAccount("12345", "John Doe", 1000)
+
+loan_account = LoanAccount("12345", "John Doe", 10000, 5)  # Sample loan account
+
+def login():
+    username = username_entry.get()
+    password = password_entry.get()
+    if username == user.username and password == user.password:
+        messagebox.showinfo("Login Successful", "Welcome to the bank!")
+        login_frame.pack_forget()
+        main_menu_frame.pack()
+    else:
+        messagebox.showerror("Login Failed", "Invalid username or password.")
+
+def deposit():
+    amount = float(deposit_amount_entry.get())
+    bank_account.deposit(amount)
+    messagebox.showinfo("Deposit", f"Deposited ${amount}. Current Balance: ${bank_account.balance}")
+
+def withdraw():
+    amount = float(withdraw_amount_entry.get())
+    bank_account.withdraw(amount)
+    messagebox.showinfo("Withdraw", f"Withdrew ${amount}. Current Balance: ${bank_account.balance}")
+
+def transfer():
+    target_account_number = transfer_target_entry.get()
+    amount = float(transfer_amount_entry.get())
+    target_account = BankAccount(target_account_number, "Jane Doe", 500)
+    bank_account.transfer_funds(target_account, amount)
+    messagebox.showinfo("Transfer", f"Transferred ${amount} to {target_account.account_number}.")
+
+def fixed_deposit():
+    amount = float(fd_amount_entry.get())
+    rate = float(fd_rate_entry.get())
+    months = int(fd_months_entry.get())
+    fd = FixedDeposit(amount, rate, months)
+    maturity_amount = fd.calculate_maturity_amount()
+    messagebox.showinfo("Fixed Deposit", f"Fixed Deposit Created! Maturity Amount: ${maturity_amount:.2f}")
+
+def emi_payment():
+    use_credit_card = use_cc_var.get()
+    emi_service.make_payment(using_credit_card=use_credit_card)
+    messagebox.showinfo("EMI Payment", f"EMI Payment Made! Remaining Loan Balance: ${loan_account.balance:.2f}")
+
+def buy_insurance():
+    coverage_percentage = float(insurance_coverage_entry.get())
+    insurance = LoanInsurance(loan_account, coverage_percentage)
+    insurance.activate_insurance()
+    messagebox.showinfo("Insurance", f"Loan insurance activated with coverage of ${insurance.coverage:.2f}.")
+
+# GUI setup
+root = tk.Tk()
+root.title("Banking System")
+
+# Login Frame
+login_frame = tk.Frame(root)
+login_frame.pack()
+
+tk.Label(login_frame, text="Username:").grid(row=0, column=0)
+username_entry = tk.Entry(login_frame)
+username_entry.grid(row=0, column=1)
+
+tk.Label(login_frame, text="Password:").grid(row=1, column=0)
+password_entry = tk.Entry(login_frame, show="*")
+password_entry.grid(row=1, column=1)
+
+login_button = tk.Button(login_frame, text="Login", command=login)
+login_button.grid(row=2, column=0, columnspan=2)
+
+# Main Menu Frame
+main_menu_frame = tk.Frame(root)
+
+deposit_button = tk.Button(main_menu_frame, text="Deposit", command=lambda: deposit())
+deposit_button.grid(row=0, column=0)
+
+withdraw_button = tk.Button(main_menu_frame, text="Withdraw", command=lambda: withdraw())
+withdraw_button.grid(row=1, column=0)
+
+transfer_button = tk.Button(main_menu_frame, text="Transfer", command=lambda: transfer())
+transfer_button.grid(row=2, column=0)
+
+fd_button = tk.Button(main_menu_frame, text="Fixed Deposit", command=lambda: fixed_deposit())
+fd_button.grid(row=3, column=0)
+
+# EMI Payment Section
+emi_button = tk.Button(main_menu_frame, text="Pay EMI", command=emi_payment)
+emi_button.grid(row=4, column=0)
+
+use_cc_var = tk.BooleanVar()
+use_cc_check = tk.Checkbutton(main_menu_frame, text="Pay using Credit Card", variable=use_cc_var)
+use_cc_check.grid(row=4, column=1)
+
+# Insurance Section
+insurance_button = tk.Button(main_menu_frame, text="Buy Loan Insurance", command=buy_insurance)
+insurance_button.grid(row=5, column=0)
+
+insurance_coverage_entry = tk.Entry(main_menu_frame)
+insurance_coverage_entry.grid(row=5, column=1)
+
+# Deposit Inputs
+deposit_amount_entry = tk.Entry(main_menu_frame)
+deposit_amount_entry.grid(row=0, column=1)
+
+# Withdraw Inputs
+withdraw_amount_entry = tk.Entry(main_menu_frame)
+withdraw_amount_entry.grid(row=1, column=1)
+
+# Transfer Inputs
+transfer_target_entry = tk.Entry(main_menu_frame)
+transfer_target_entry.grid(row=2, column=1)
+transfer_amount_entry = tk.Entry(main_menu_frame)
+transfer_amount_entry.grid(row=2, column=2)
+
+# Fixed Deposit Inputs
+fd_amount_entry = tk.Entry(main_menu_frame)
+fd_amount_entry.grid(row=3, column=1)
+fd_rate_entry = tk.Entry(main_menu_frame)
+fd_rate_entry.grid(row=3, column=2)
+fd_months_entry = tk.Entry(main_menu_frame)
+fd_months_entry.grid(row=3, column=3)
+
+root.mainloop()

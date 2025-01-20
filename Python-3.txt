@@ -1,0 +1,31 @@
+# file3: emi_payment_code.py
+
+from loan_opening_code import LoanAccount
+from account_opening_code import BankAccount
+
+class EMIPayment:
+    def __init__(self, loan_account, tenure_in_months):
+        self.loan_account = loan_account
+        self.tenure_in_months = tenure_in_months
+        self.emi_amount = self.calculate_emi()
+
+    def calculate_emi(self):
+        # Calculate monthly interest rate
+        monthly_interest_rate = self.loan_account.interest_rate / 100 / 12
+
+        # Calculate EMI using formula
+        emi = (self.loan_account.loan_amount * monthly_interest_rate * ((1 + monthly_interest_rate) ** self.tenure_in_months)) / (((1 + monthly_interest_rate) ** self.tenure_in_months) - 1)
+        return emi
+
+    def make_payment(self, using_credit_card=False):
+        if self.loan_account.balance > 0:
+            if self.emi_amount <= self.loan_account.balance:
+                self.loan_account.pay_installment(self.emi_amount, using_credit_card=using_credit_card)
+                if using_credit_card:
+                    print("Payment made using credit card.")
+                else:
+                    print("Payment made from loan account balance.")
+            else:
+                print("EMI amount exceeds remaining balance.")
+        else:
+            print("Loan has been fully paid.")

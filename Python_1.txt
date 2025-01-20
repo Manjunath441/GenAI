@@ -1,73 +1,71 @@
-# file1: account_opening_code.py
-
-import time
-
-class User:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-
-class BankAccount:
-    def __init__(self, account_number, holder_name, balance=0):
-        self.account_number = account_number
-        self.holder_name = holder_name
-        self.balance = balance
-    
-    def deposit(self, amount):
-        if amount > 0:
-            self.balance += amount
-            print(f"Deposited ${amount}. Current balance: ${self.balance}")
-        else:
-            print("Invalid deposit amount.")
-    
-    def withdraw(self, amount):
-        if 0 < amount <= self.balance:
-            self.balance -= amount
-            print(f"Withdrew ${amount}. Current balance: ${self.balance}")
-        else:
-            print("Insufficient funds or invalid withdrawal amount.")
-    
-    def display_balance(self):
-        print(f"Account Number: {self.account_number}")
-        print(f"Holder Name: {self.holder_name}")
-        print(f"Current Balance: ${self.balance}")
-    
-    def authenticate(self, user):
-        username_input = input("Enter username: ")
-        password_input = input("Enter password: ")
-        if username_input == user.username and password_input == user.password:
-            return True
-        else:
-            print("Invalid credentials. Try again.")
-            return False
-
-    def transfer_funds(self, target_account, amount):
-        if 0 < amount <= self.balance:
-            self.balance -= amount
-            target_account.balance += amount
-            print(f"Transferred ${amount} to account {target_account.account_number}.")
-            print(f"New balance: ${self.balance}")
-        else:
-            print("Insufficient funds or invalid amount.")
-
-class FixedDeposit:
-    def __init__(self, amount, interest_rate, months):
-        self.amount = amount
-        self.interest_rate = interest_rate
-        self.months = months
-
-    def calculate_maturity_amount(self):
-        # Using compound interest formula: A = P(1 + r/n)^(nt)
-        rate_per_month = self.interest_rate / 100 / 12
-        maturity_amount = self.amount * (1 + rate_per_month) ** self.months
-        return maturity_amount
-
-    def display_maturity_amount(self):
-        maturity_amount = self.calculate_maturity_amount()
-        print(f"Fixed Deposit Amount: ${self.amount}")
-        print(f"Interest Rate: {self.interest_rate}%")
-        print(f"Months: {self.months}")
-        print(f"Maturity Amount: ${maturity_amount:.2f}")
-
-# Sample user for authentication
-user = User("john_doe", "password123")
+1  import time
+ 2  
+ 3  class User:
+ 4      def __init__(self, username, password):
+ 5          self.username = username
+ 6          self.password = password
+ 7  
+ 8  class BankAccount:
+ 9      def __init__(self, account_number, holder_name, balance=0):
+10          self.account_number = account_number
+11          self.holder_name = holder_name
+12          self.balance = balance
+13      
+14      def deposit(self, amount):
+15          if amount > 0:
+16              self.balance += amount
+17              print(f"Deposited ${amount}. Current balance: ${self.balance}")
+18          else:
+19              print("Invalid deposit amount.")
+20      
+21      def withdraw(self, amount):
+22          if 0 < amount <= self.balance:
+23              self.balance -= amount
+24              print(f"Withdrew ${amount}. Current balance: ${self.balance}")
+25          else:
+26              print("Insufficient funds or invalid withdrawal amount.")
+27      
+28      def display_balance(self):
+29          print(f"Account Number: {self.account_number}")
+30          print(f"Holder Name: {self.holder_name}")
+31          print(f"Current Balance: ${self.balance}")
+32      
+33      def authenticate(self, user):
+34          username_input = input("Enter username: ")
+35          password_input = input("Enter password: ")
+36          if username_input == user.username and password_input == user.password:
+37              return True
+38          else:
+39              print("Invalid credentials. Try again.")
+40              return False
+41  
+42      def transfer_funds(self, target_account, amount):
+43          if 0 < amount <= self.balance:
+44              self.balance -= amount
+45              target_account.balance += amount
+46              print(f"Transferred ${amount} to account {target_account.account_number}.")
+47              print(f"New balance: ${self.balance}")
+48          else:
+49              print("Insufficient funds or invalid amount.")
+50  
+51  class FixedDeposit:
+52      def __init__(self, amount, interest_rate, months):
+53          self.amount = amount
+54          self.interest_rate = interest_rate
+55          self.months = months
+56  
+57      def calculate_maturity_amount(self):
+58          # Using compound interest formula: A = P(1 + r/n)^(nt)
+59          rate_per_month = self.interest_rate / 100 / 12
+60          maturity_amount = self.amount * (1 + rate_per_month) ** self.months
+61          return maturity_amount
+62  
+63      def display_maturity_amount(self):
+64          maturity_amount = self.calculate_maturity_amount()
+65          print(f"Fixed Deposit Amount: ${self.amount}")
+66          print(f"Interest Rate: {self.interest_rate}%")
+67          print(f"Months: {self.months}")
+68          print(f"Maturity Amount: ${maturity_amount:.2f}")
+69  
+70  # Sample user for authentication
+71  user = User("john_doe", "password123")
